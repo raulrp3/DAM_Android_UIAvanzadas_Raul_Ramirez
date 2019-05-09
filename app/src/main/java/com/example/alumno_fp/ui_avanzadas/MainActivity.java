@@ -9,20 +9,26 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Toast;
 
 import com.example.alumno_fp.ui_avanzadas.Fragments.FirstWebFragment;
 import com.example.alumno_fp.ui_avanzadas.Fragments.LoadWebFragment;
 import com.example.alumno_fp.ui_avanzadas.Fragments.SecondWebFragment;
+import com.example.alumno_fp.ui_avanzadas.Interfaces.SendUrl;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SendUrl {
 
 
     private Toolbar toolbar;
     private ViewPager viewPager;
     private TabLayout tabs;
+    private FragmentAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +48,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpViewPager(ViewPager viewPager){
-        FragmentAdapter adapter = new FragmentAdapter(getSupportFragmentManager());
+        adapter = new FragmentAdapter(getSupportFragmentManager());
         adapter.addFragment(new FirstWebFragment(), "FIRST WEB");
         adapter.addFragment(new SecondWebFragment(), "SECOND WEB");
         adapter.addFragment(new LoadWebFragment(), "LOAD WEB");
         viewPager.setAdapter(adapter);
+    }
+
+    @Override
+    public void sendData(String data, int position) {
+        switch (position){
+            case 0: {
+                FirstWebFragment firstWebFragment = (FirstWebFragment) adapter.getItem(position);
+                firstWebFragment.receivedUrl(data);
+            }
+            break;
+            case 1: {
+                SecondWebFragment secondWebFragment = (SecondWebFragment) adapter.getItem(position);
+                secondWebFragment.receivedUrl(data);
+            }
+            break;
+        }
     }
 
     static class FragmentAdapter extends FragmentPagerAdapter{
